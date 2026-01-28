@@ -2,114 +2,524 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>My Portfolio</title>
-
-  <!-- Font Awesome Icons -->
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Avanish Yadav | Portfolio</title>
   <style>
+    :root {
+      --bg-dark: radial-gradient(circle at top, #020617, #000000);
+      --bg-light: linear-gradient(to bottom, #87ceeb, #e0f2fe);
+      --text-dark: #e5e7eb;
+      --text-light: #0f172a;
+      --card-dark: rgba(2,6,23,0.7);
+      --card-light: rgba(255,255,255,0.75);
+      --galaxy-dark: radial-gradient(1200px 600px at 70% 30%, rgba(99,102,241,0.12), transparent 60%),
+                      radial-gradient(900px 500px at 20% 70%, rgba(236,72,153,0.08), transparent 65%),
+                      radial-gradient(700px 400px at 50% 50%, rgba(56,189,248,0.06), transparent 60%);
+      --earth-light: radial-gradient(600px 600px at 50% 85%, rgba(34,197,94,0.55), transparent 60%),
+                      radial-gradient(900px 400px at 50% 100%, rgba(22,163,74,0.45), transparent 70%),
+                      radial-gradient(1200px 300px at 50% 110%, rgba(59,130,246,0.35), transparent 75%);
+    }
+    
+    * { margin: 0; padding: 0; box-sizing: border-box; }
     body {
-      margin: 0;
-      height: 100vh;
-      background: linear-gradient(135deg, #0f2027, #203a43, #2c5364);
-      display: flex;
-      justify-content: center;
-      align-items: center;
-      font-family: 'Poppins', sans-serif;
-      color: #fff;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: var(--bg-dark);
+      color: var(--text-dark);
+      line-height: 1.6;
+      overflow-x: hidden;
+      cursor: none;
+      transition: background 0.6s ease, color 0.6s ease;
     }
-
-    .card {
-      text-align: center;
-      padding: 30px 40px;
+    body::before {
+      content: '';
+      position: fixed;
+      inset: 0;
+      background: var(--galaxy-dark);
+      opacity: 0.85;
+      z-index: 0;
+      pointer-events: none;
     }
-
-    .profile-img {
-      width: 150px;
-      height: 150px;
+    
+    body.light::before {
+      background: var(--earth-light);
+      opacity: 1;
+    }
+    body.light {
+      background: var(--bg-light);
+      color: var(--text-light);
+    }
+    #theme-toggle {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      padding: 10px 14px;
+      border-radius: 999px;
+      background: rgba(255,255,255,0.15);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(255,255,255,0.25);
+      color: inherit;
+      cursor: pointer;
+      z-index: 10;
+      font-size: 0.9rem;
+    }
+    #spring-cursor {
+      position: fixed;
+      inset: 0;
+      pointer-events: none;
+      z-index: 2; /* cursor trail on top */
+    }
+    .cursor-ball {
+      position: absolute;
+      width: 5px;
+      height: 5px;
       border-radius: 50%;
-      object-fit: cover;
-      border: 4px solid #fff;
-      margin-bottom: 15px;
+      background: rgba(255,255,255,0.45);
+      box-shadow: 0 0 6px rgba(255,255,255,0.5), 0 0 12px rgba(255,255,255,0.25);
+      opacity: 0.6;
+      mix-blend-mode: screen;
     }
-
+    body.light .cursor-ball {
+      background: rgba(0,0,0,0.35);
+      box-shadow: 0 0 6px rgba(0,0,0,0.25);
+    }
+    canvas {
+      position: fixed;
+      inset: 0;
+      z-index: 1; /* space dust above galaxy */
+      pointer-events: none;
+    }
+    a { color: #38bdf8; text-decoration: none; }
+    .container {
+      max-width: 1100px;
+      margin: auto;
+      padding: 40px 20px;
+      position: relative;
+      z-index: 3; /* content always top readable */
+    }
+    header { margin-bottom: 90px; }
     h1 {
-      margin: 10px 0 5px;
-      font-size: 28px;
-      letter-spacing: 1px;
+      font-size: 3.2rem;
+      font-weight: 800;
+      animation: floatText 8s ease-in-out infinite;
     }
-
-    .typing {
-      font-size: 16px;
-      color: #dcdcdc;
-      height: 22px;
-      margin-bottom: 25px;
+    h2 {
+      font-size: 1.6rem;
+      margin-bottom: 15px;
+      animation: floatText 10s ease-in-out infinite;
     }
-
-    .socials a {
-      color: #fff;
-      font-size: 22px;
-      margin: 0 12px;
-      transition: 0.3s;
+    p {
+      color: inherit;
+      animation: floatText 12s ease-in-out infinite;
     }
-
-    .socials a:hover {
-      color: #00d9ff;
-      transform: scale(1.2);
+    .tagline { font-size: 1.1rem; max-width: 650px; }
+    section { margin-bottom: 90px; }
+    .skills, .projects { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 25px; }
+    .card {
+      background: var(--card-dark);
+      backdrop-filter: blur(8px);
+      padding: 28px;
+      border-radius: 20px;
+      box-shadow: 0 20px 40px rgba(0,0,0,0.5);
+      transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.6s ease;
+      transform-style: preserve-3d;
+    }
+    body.light .card { background: var(--card-light); box-shadow: 0 20px 40px rgba(0,0,0,0.15); }
+    .card:hover { box-shadow: 0 30px 60px rgba(0,0,0,0.7); }
+    .gallery { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; }
+    .gallery img { width: 100%; border-radius: 16px; object-fit: cover; }
+    @media (max-width: 768px) {
+      body { cursor: auto; }
+      #spring-cursor { display: none; }
+      h1 { font-size: 2.2rem; }
+      canvas { opacity: 0.6; }
+    }
+    footer {
+      text-align: center;
+      font-size: 0.9rem;
+      margin-top: 60px;
+      animation: floatText 14s ease-in-out infinite;
+    }
+  @keyframes floatText {
+      0%   { transform: translateY(0px) translateX(0px); }
+      25%  { transform: translateY(-6px) translateX(2px); }
+      50%  { transform: translateY(0px) translateX(-2px); }
+      75%  { transform: translateY(6px) translateX(1px); }
+      100% { transform: translateY(0px) translateX(0px); }
     }
   </style>
 </head>
-
 <body>
+  <button id="theme-toggle">🌙 Dark</button>
+  <div id="spring-cursor"></div>
+  <canvas id="gravity"></canvas>
+  <div class="container">
+    <header>
+      <h1>Avanish Yadav <span style="font-size:0.9rem;font-weight:400;color:#94a3b8;">overthinker</span></h1>
+      <p class="tagline">
+        A curious mind learning to build meaningful things.
+        <br />Designer • Developer • Writer • AIML Student
+      </p>
+    </header>
 
-  <div class="card">
-    <img src="profile.jpg" class="profile-img" alt="Profile">
+    
 
-    <h1>Avanish Yadav</h1>
+    
 
-    <div class="typing" id="typing"></div>
+    
 
-    <div class="socials">
-      <a href="https://instagram.com/" target="_blank"><i class="fab fa-instagram"></i></a>
-      <a href="mailto:yourmail@gmail.com"><i class="fas fa-envelope"></i></a>
-      <a href="https://twitter.com/" target="_blank"><i class="fab fa-x-twitter"></i></a>
-      <a href="#"><i class="fab fa-linkedin"></i></a>
-    </div>
+    <section>
+      <h2>Gallery</h2>
+      <div class="gallery">
+        <img src="photo1.jpg" alt="Gallery Image" />
+        <img src="photo2.jpg" alt="Gallery Image" />
+        <img src="photo3.jpg" alt="Gallery Image" />
+      </div>
+    </section>
+
+    <section>
+      <h2>Projects</h2>
+      <div class="projects">
+        <div class="card">
+          <h3>Personal Portfolio</h3>
+          <p>A clean, minimal portfolio showcasing my journey and skills.</p>
+        </div>
+        <div class="card">
+          <h3>Learning Projects</h3>
+          <p>Small Python and web projects built while learning fundamentals.</p>
+        </div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Resume</h2>
+      <p>You can view or download my resume from here:</p>
+      <div class="skills">
+        <div class="card"><a href="resume.pdf" target="_blank">📄 View Resume</a></div>
+        <div class="card"><a href="resume.pdf" download>⬇️ Download Resume</a></div>
+      </div>
+    </section>
+
+    <section>
+      <h2>Contact</h2>
+      <p>Email: yourname@email.com</p>
+      <p>LinkedIn / GitHub: coming soon</p>
+    </section>
+
+    <section>
+      <h2>Social</h2>
+      <div class="skills">
+        <div class="card"><a href="#">Instagram</a></div>
+        <div class="card"><a href="#">LinkedIn</a></div>
+        <div class="card"><a href="#">GitHub</a></div>
+        <div class="card"><a href="#">Twitter / X</a></div>
+        <div class="card"><a href="#">Telegram</a></div>
+      </div>
+    </section>
+
+    <footer>
+      © 2026 Avanish Yadav. Built with focus and patience.
+    </footer>
   </div>
+<script>
+  // THEME TOGGLE
+  const toggle = document.getElementById('theme-toggle');
+  const body = document.body;
+  toggle.addEventListener('click', () => {
+    body.classList.toggle('light');
+    toggle.textContent = body.classList.contains('light') ? '☀️ Light' : '🌙 Dark';
+  });
 
-  <script>
-    const texts = [
-      "Dreaming. Building. Becoming.",
-      "Future Engineer & Creator",
-      "Turning ideas into reality",
-      "Learning. Hustling. Growing."
-    ];
 
-    let count = 0;
-    let index = 0;
-    let currentText = "";
-    let letter = "";
+  // MULTI SPRING CURSOR BALLS (BACKGROUND)
+  const cursorContainer = document.getElementById('spring-cursor');
+  const balls = [];
+  const BALL_COUNT = 18; // slightly denser trail
 
-    (function type() {
-      if (count === texts.length) {
-        count = 0;
+  for (let i = 0; i < BALL_COUNT; i++) {
+    const b = document.createElement('div');
+    b.className = 'cursor-ball';
+    cursorContainer.appendChild(b);
+    balls.push({ el: b, x: window.innerWidth/2, y: window.innerHeight/2, vx: 0, vy: 0 });
+  }
+
+  let mx = window.innerWidth/2, my = window.innerHeight/2;
+  window.addEventListener('mousemove', e => {
+    mx = e.clientX;
+    my = e.clientY;
+  });
+
+  function animateCursor() {
+    const header = document.querySelector('header');
+    const headerRect = header.getBoundingClientRect();
+
+    balls.forEach((b, i) => {
+      let dx = mx - b.x;
+      let dy = my - b.y;
+
+      // extra density near header (cosmic focus)
+      const inHeader = mx > headerRect.left && mx < headerRect.right && my > headerRect.top && my < headerRect.bottom;
+      const densityBoost = inHeader ? 1.6 : 1;
+
+      // spring force
+      b.vx += dx * 0.045 * (1 - i / BALL_COUNT) * densityBoost;
+      b.vy += dy * 0.045 * (1 - i / BALL_COUNT) * densityBoost;
+
+      // gentle bend away from text blocks
+      document.querySelectorAll('h1, h2, p').forEach(t => {
+        const r = t.getBoundingClientRect();
+        if (b.x > r.left && b.x < r.right && b.y > r.top && b.y < r.bottom) {
+          b.vx += (b.x - (r.left + r.width/2)) * 0.002;
+          b.vy += (b.y - (r.top + r.height/2)) * 0.002;
+        }
+      });
+
+      // damping
+      b.vx *= 0.85;
+      b.vy *= 0.85;
+
+      b.x += b.vx;
+      b.y += b.vy;
+
+      // space spiral pattern
+      const angle = i * 0.6 + performance.now() * 0.002;
+      const radius = 6 * (i / BALL_COUNT);
+      const ox = Math.cos(angle) * radius;
+      const oy = Math.sin(angle) * radius;
+
+      // fade trail
+      b.el.style.opacity = 1 - i / BALL_COUNT;
+      b.el.style.transform = `translate(${b.x + ox}px, ${b.y + oy}px)`;
+    });
+    requestAnimationFrame(animateCursor);
+  }
+  animateCursor();
+
+  // EXISTING SCRIPT BELOW
+
+  const canvas = document.getElementById('gravity');
+  const ctx = canvas.getContext('2d');
+  let w, h;
+  function resize() {
+    w = canvas.width = window.innerWidth;
+    h = canvas.height = window.innerHeight;
+  }
+  window.addEventListener('resize', resize);
+  resize();
+
+  let mouse = { x: null, y: null };
+  let ripple = [];
+  window.addEventListener('mousemove', e => {
+    mouse.x = e.clientX;
+    mouse.y = e.clientY;
+  });
+  window.addEventListener('click', e => {
+    mouse.x = e.clientX;
+    mouse.y = e.clientY;
+    ripple.push({ x: e.clientX, y: e.clientY, radius: 0, speed: 6, alpha: 0.6 });
+  });
+
+  // SPACE DUST PARTICLES (DARK MODE)
+  const particles = Array.from({ length: 120 }, () => ({
+    x: Math.random() * w,
+    y: Math.random() * h,
+    vx: (Math.random() - 0.5) * 0.6,
+    vy: (Math.random() - 0.5) * 0.6,
+    r: Math.random() * 2 + 0.5
+  }));
+
+  function animate() {
+    ctx.clearRect(0, 0, w, h);
+
+    const isLight = document.body.classList.contains('light');
+    const now = performance.now();
+
+    if (!isLight) {
+      // 🌌 DARK MODE — SPACE DUST (STABLE)
+      particles.forEach(p => {
+        if (mouse.x !== null && mouse.y !== null) {
+          const dx = mouse.x - p.x;
+          const dy = mouse.y - p.y;
+          const dist = Math.sqrt(dx * dx + dy * dy) || 1;
+          const force = Math.min(5 / dist, 0.12);
+          p.vx += dx * force;
+          p.vy += dy * force + 0.015;
+        }
+        p.x += p.vx;
+        p.y += p.vy;
+        p.vx *= 0.98;
+        p.vy *= 0.98;
+        if (p.x < 0 || p.x > w) p.vx *= -1;
+        if (p.y < 0 || p.y > h) p.vy *= -1;
+        ctx.beginPath();
+        ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+        ctx.fillStyle = 'rgba(148,163,184,0.6)';
+        ctx.fill();
+      });
+    } else {
+      // ☀️ LIGHT MODE — DEFENCE‑TECH (NON‑VIOLENT, STABLE)
+
+      // ✨ Cursor energy aura
+      if (mouse.x !== null && mouse.y !== null) {
+        for (let i = 0; i < 6; i++) {
+          const r = 14 + i * 6 + Math.sin(now * 0.003 + i) * 2;
+          ctx.beginPath();
+          ctx.arc(mouse.x, mouse.y, r, 0, Math.PI * 2);
+          ctx.strokeStyle = 'rgba(16,185,129,0.18)';
+          ctx.lineWidth = 1;
+          ctx.stroke();
+        }
       }
 
-      currentText = texts[count];
-      letter = currentText.slice(0, ++index);
+      // ✈️ Jet fly‑by (background)
+      const t = now * 0.0012;
+      const jetX = (t * 220) % (w + 200) - 100;
+      const jetY = h * 0.25 + Math.sin(t) * 18;
+      ctx.save();
+      ctx.translate(jetX, jetY);
+      ctx.rotate(0.05);
+      ctx.beginPath();
+      ctx.moveTo(-18, 0);
+      ctx.lineTo(12, -4);
+      ctx.lineTo(16, 0);
+      ctx.lineTo(12, 4);
+      ctx.closePath();
+      ctx.fillStyle = 'rgba(15,23,42,0.35)';
+      ctx.fill();
+      ctx.restore();
 
-      document.getElementById("typing").textContent = letter;
+      // 🚁 Drones (stable, visible)
+      function drawDrone(x, y, scale, alpha) {
+        // cursor‑repel interaction (safe)
+        let dxm = 0, dym = 0;
+        if (mouse.x !== null && mouse.y !== null) {
+          const dx = x - mouse.x;
+          const dy = y - mouse.y;
+          const dist = Math.sqrt(dx*dx + dy*dy) || 1; // avoid divide‑by‑zero
+          if (dist < 120) {
+            dxm = (dx / dist) * 30;
+            dym = (dy / dist) * 30;
+          }
+        }
 
-      if (letter.length === currentText.length) {
-        setTimeout(() => {
-          index = 0;
-          count++;
-        }, 2000);
+        ctx.save();
+        ctx.translate(x + dxm, y + dym);
+        ctx.scale(scale, scale);
+        ctx.globalAlpha = alpha;
+
+        // body
+        ctx.beginPath();
+        ctx.rect(-20, -6, 40, 12);
+        ctx.fillStyle = 'rgba(0,0,0,0.18)';
+        ctx.fill();
+        ctx.lineWidth = 2;
+        ctx.strokeStyle = 'rgba(0,0,0,0.7)';
+        ctx.stroke();
+
+        // arms
+        ctx.beginPath();
+        ctx.moveTo(-20, 0); ctx.lineTo(-34, 0);
+        ctx.moveTo(20, 0); ctx.lineTo(34, 0);
+        ctx.strokeStyle = 'rgba(0,0,0,0.65)';
+        ctx.stroke();
+
+        // propellers
+        [-34, 34].forEach(px => {
+          ctx.beginPath();
+          ctx.arc(px, 0, 9, 0, Math.PI * 2);
+          ctx.strokeStyle = 'rgba(0,0,0,0.6)';
+          ctx.shadowColor = 'rgba(0,0,0,0.35)';
+          ctx.shadowBlur = 8;
+          ctx.stroke();
+        });
+        ctx.restore();
       }
 
-      setTimeout(type, 100);
-    })();
-  </script>
+      // draw drones INSIDE light‑mode block
+      drawDrone(w * 0.72, h * 0.32 + Math.sin(t) * 8, 1.3, 0.95);
+      drawDrone(w * 0.55, h * 0.42 + Math.sin(t + 1) * 6, 0.9, 0.75);
+      drawDrone(w * 0.82, h * 0.48 + Math.sin(t + 2) * 5, 0.8, 0.65);
 
+      drawDrone(w * 0.55, h * 0.42 + Math.sin(t + 1) * 6, 0.9, 0.75);
+      drawDrone(w * 0.82, h * 0.48 + Math.sin(t + 2) * 5, 0.8, 0.65);
+
+      // 🛡️ Radar / shield (cursor‑centric)
+      if (mouse.x !== null && mouse.y !== null) {
+        for (let r = 12; r <= 48; r += 12) {
+          ctx.beginPath();
+          ctx.arc(mouse.x, mouse.y, r + (now * 0.02) % 10, 0, Math.PI * 2);
+          ctx.strokeStyle = 'rgba(56,189,248,0.28)';
+          ctx.lineWidth = 1;
+          ctx.stroke();
+        }
+        ctx.save();
+        ctx.translate(mouse.x, mouse.y);
+        ctx.rotate(now * 0.001);
+        ctx.beginPath();
+        ctx.moveTo(0, 0);
+        ctx.lineTo(70, 0);
+        ctx.strokeStyle = 'rgba(56,189,248,0.35)';
+        ctx.stroke();
+        ctx.restore();
+      }
+
+      // ⚙️ Ground engineering nodes
+      for (let i = 0; i < 6; i++) {
+        const ex = (w / 6) * i + 40;
+        const ey = h * 0.78 + Math.sin(t + i) * 6;
+        ctx.beginPath();
+        ctx.rect(ex - 8, ey - 8, 16, 16);
+        ctx.strokeStyle = 'rgba(2,132,199,0.45)';
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(ex, ey);
+        ctx.lineTo(ex, ey - 18);
+        ctx.strokeStyle = 'rgba(2,132,199,0.35)';
+        ctx.stroke();
+      }
+
+      // 🛰️ Satellite / command node
+      ctx.save();
+      ctx.translate(w * 0.18, h * 0.22);
+      ctx.rotate(Math.sin(t) * 0.2);
+      ctx.beginPath();
+      ctx.rect(-10, -6, 20, 12);
+      ctx.strokeStyle = 'rgba(15,23,42,0.45)';
+      ctx.stroke();
+      ctx.beginPath();
+      ctx.moveTo(-20, -4); ctx.lineTo(-10, -4);
+      ctx.moveTo(10, -4); ctx.lineTo(20, -4);
+      ctx.stroke();
+      ctx.restore();
+    }
+
+    requestAnimationFrame(animate);
+  }
+  animate();
+
+  // Gallery gravity + opposite tilt
+  document.querySelectorAll('.gallery img').forEach(img => {
+    let vx = 0, vy = 0;
+    img.addEventListener('mousemove', e => {
+      const rect = img.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
+      const cx = rect.width / 2;
+      const cy = rect.height / 2;
+      const tiltX = (cy - y) / cy * 6;
+      const tiltY = (x - cx) / cx * 6;
+      img.style.transform = `perspective(600px) rotateX(${tiltX}deg) rotateY(${tiltY}deg) translateZ(8px)`;
+    });
+    img.addEventListener('mouseleave', () => {
+      img.style.transform = 'perspective(600px) rotateX(0deg) rotateY(0deg) translateZ(0)';
+    });
+    setInterval(() => {
+      vx += (Math.random() - 0.5) * 0.02;
+      vy += 0.03;
+      vx *= 0.98;
+      vy *= 0.98;
+      img.style.transform += ` translate(${vx}px, ${vy}px)`;
+    }, 60);
+  });
+</script>
 </body>
 </html>
